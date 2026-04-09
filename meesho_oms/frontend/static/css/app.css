@@ -277,3 +277,178 @@ body {
 .rupee::before { content: '₹'; }
 .mono { font-family: var(--mono); font-size: 12.5px; }
 a { color: inherit; }
+
+/* ── Alert Strips ────────────────────────────────── */
+.alert-strip {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+.alert-red    { background: #FFF0ED; color: #C43D28; border-left: 4px solid #E8553E; }
+.alert-orange { background: #FFF8EC; color: #B97A00; border-left: 4px solid #F5A623; }
+.alert-blue   { background: #EEF3FF; color: #2A5BD7; border-left: 4px solid #4A7CF7; }
+.alert-strip a { color: inherit; font-weight: 700; }
+
+/* ── KPI Extra Cards ─────────────────────────────── */
+.kpi-real-profit .kpi-icon { background: #E8F5E9; color: #2E7D32; }
+.kpi-commission  .kpi-icon { background: #FCE4EC; color: #C62828; }
+
+/* ── Profit Breakdown ────────────────────────────── */
+.breakdown-item {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 8px;
+}
+.breakdown-val   { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+.breakdown-label { font-size: 11px; color: var(--text-muted); }
+.breakdown-op    { font-size: 22px; font-weight: 700; color: var(--text-muted); }
+.highlight-profit {
+  background: var(--green-lt);
+  border-color: var(--green);
+}
+
+/* ── Return Reason Badge ─────────────────────────── */
+.return-reason-badge {
+  background: #FFF8EC;
+  color: #B97A00;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  border: 1px solid #F5A623;
+}
+
+/* ── Best Selling Items ──────────────────────────── */
+.best-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.best-item:last-child { border-bottom: none; }
+
+.best-rank {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--bg2);
+  color: var(--text-sec);
+  font-size: 12px; font-weight: 700;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.best-rank.gold   { background: #FFD700; color: #7A5800; }
+.best-rank.silver { background: #C0C0C0; color: #444; }
+.best-rank.bronze { background: #CD7F32; color: #fff; }
+
+.best-info { flex: 1; min-width: 0; }
+.best-name {
+  font-size: 13px; font-weight: 600;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+.best-bar-wrap {
+  height: 5px; background: var(--bg2);
+  border-radius: 3px; overflow: hidden;
+}
+.best-bar {
+  height: 100%; background: var(--accent);
+  border-radius: 3px;
+  transition: width .5s ease;
+}
+
+.best-stats { text-align: right; flex-shrink: 0; }
+.best-qty { font-size: 13px; font-weight: 700; color: var(--text-pri); }
+.best-rev { font-size: 11px; color: var(--text-muted); }
+
+/* ── Daily Summary ───────────────────────────────── */
+.compare-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.compare-row:last-child { border-bottom: none; }
+.compare-label { font-size: 13px; color: var(--text-sec); }
+.compare-val   { font-size: 14px; font-weight: 700; }
+
+/* ── Supplier Calc ───────────────────────────────── */
+.supplier-calc {
+  background: var(--bg2);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 13px;
+  min-height: 34px;
+}
+
+/* ── CSV Import ──────────────────────────────────── */
+.csv-drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all .2s;
+  font-size: 13px;
+  color: var(--text-sec);
+}
+.csv-drop-zone i { font-size: 22px; color: var(--green); }
+.csv-drop-zone:hover { border-color: var(--green); background: var(--green-lt); }
+.csv-drop-zone.drag-over { border-color: var(--green); background: var(--green-lt); }
+
+.csv-file-info {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-sec);
+  padding: 8px 12px;
+  background: var(--green-lt);
+  border-radius: 8px;
+}
+
+.csv-help {
+  background: var(--bg2);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+.csv-help-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sec);
+  margin-bottom: 8px;
+}
+.csv-help-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.csv-step {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  color: var(--text-pri);
+}
+.csv-help-steps .bi-arrow-right {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+/* ── User Badge ──────────────────────────────────── */
+.user-badge {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-sec);
+  background: var(--bg2);
+  padding: 5px 12px;
+  border-radius: 20px;
+}

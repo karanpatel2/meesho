@@ -6,7 +6,6 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "..", "database", "meesho_oms.
 
 
 def dict_factory(cursor, row):
-    """Return rows as dicts (like psycopg2 RealDictCursor)."""
     return {col[0]: row[idx] for idx, col in enumerate(cursor.description)}
 
 
@@ -35,12 +34,24 @@ def get_cursor(commit=False):
 
 
 def init_db():
-    """Create all tables if they don't exist."""
+    """Tables banao agar exist nahi karti."""
     schema_path = os.path.join(os.path.dirname(__file__), "..", "database", "schema.sql")
+    
+    # Check karo schema file hai
+    if not os.path.exists(schema_path):
+        print(f"ERROR: schema.sql nahi mila: {schema_path}")
+        return
+    
     with open(schema_path, "r") as f:
         sql = f.read()
+    
     conn = get_connection()
-    conn.executescript(sql)
-    conn.commit()
-    conn.close()
-    print("SQLite database initialized successfully.")
+    try:
+        conn.executescript(sql)
+        conn.commit()
+        print("✅ SQLite database initialized successfully.")
+        print(f"📁 DB location: {os.path.abspath(DB_PATH)}")
+    except Exception as e:
+        print(f"❌ DB Error: {e}")
+    finally:
+        conn.close()

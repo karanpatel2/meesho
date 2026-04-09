@@ -26,6 +26,10 @@
     <li><a href="#" class="nav-link" data-page="upload"><i class="bi bi-cloud-upload-fill"></i><span>Upload Invoice</span></a></li>
     <li><a href="#" class="nav-link" data-page="orders"><i class="bi bi-receipt-cutoff"></i><span>Orders</span></a></li>
     <li><a href="#" class="nav-link" data-page="stock"><i class="bi bi-boxes"></i><span>Stock</span></a></li>
+    <li><a href="#" class="nav-link" data-page="packaging"><i class="bi bi-box-seam-fill"></i><span>Packaging</span></a></li>
+    <li><a href="#" class="nav-link" data-page="payments"><i class="bi bi-cash-coin"></i><span>Payments</span></a></li>
+    <li><a href="#" class="nav-link" data-page="daily"><i class="bi bi-calendar-check-fill"></i><span>Daily Summary</span></a></li>
+    <li><a href="#" class="nav-link" data-page="suppliers"><i class="bi bi-people-fill"></i><span>Suppliers</span></a></li>
     <li><a href="#" class="nav-link" data-page="logs"><i class="bi bi-journal-text"></i><span>Upload Logs</span></a></li>
   </ul>
   <div class="sidebar-footer">v1.0 · Meesho OMS</div>
@@ -37,9 +41,16 @@
   <header class="topbar">
     <button class="sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
     <div class="topbar-title" id="pageTitle">Dashboard</div>
-    <div class="topbar-actions">
-      <span class="badge-date"><i class="bi bi-calendar3"></i> <span id="todayDate"></span></span>
-    </div>
+<div class="topbar-actions d-flex align-items-center gap-3">
+  <span class="badge-date"><i class="bi bi-calendar3"></i> <span id="todayDate"></span></span>
+  <div class="user-badge">
+    <i class="bi bi-person-circle me-1"></i>
+    <span id="topbarUser">—</span>
+  </div>
+  <button class="btn btn-sm btn-outline-danger" onclick="doLogout()">
+    <i class="bi bi-box-arrow-right me-1"></i>Logout
+  </button>
+</div>
   </header>
 
   <main class="page-content">
@@ -68,14 +79,97 @@
           </div>
         </div>
       </div>
-
+    <!-- Alerts Bar -->
+      <div id="alertsBar" class="mb-3"></div>
       <!-- KPI Cards -->
-      <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3"><div class="kpi-card kpi-orders"><div class="kpi-icon"><i class="bi bi-cart-check-fill"></i></div><div class="kpi-body"><div class="kpi-val" id="kpiOrders">—</div><div class="kpi-label">Total Orders</div></div></div></div>
-        <div class="col-6 col-md-3"><div class="kpi-card kpi-returns"><div class="kpi-icon"><i class="bi bi-arrow-return-left"></i></div><div class="kpi-body"><div class="kpi-val" id="kpiReturns">—</div><div class="kpi-label">Returns</div></div></div></div>
-        <div class="col-6 col-md-3"><div class="kpi-card kpi-revenue"><div class="kpi-icon"><i class="bi bi-currency-rupee"></i></div><div class="kpi-body"><div class="kpi-val" id="kpiRevenue">—</div><div class="kpi-label">Net Revenue</div></div></div></div>
-        <div class="col-6 col-md-3"><div class="kpi-card kpi-profit"><div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div><div class="kpi-body"><div class="kpi-val" id="kpiProfit">—</div><div class="kpi-label">Profit</div></div></div></div>
+<!-- KPI Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-2">
+    <div class="kpi-card kpi-orders">
+      <div class="kpi-icon"><i class="bi bi-cart-check-fill"></i></div>
+      <div class="kpi-body"><div class="kpi-val" id="kpiOrders">—</div><div class="kpi-label">Total Orders</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="kpi-card kpi-returns">
+      <div class="kpi-icon"><i class="bi bi-arrow-return-left"></i></div>
+      <div class="kpi-body"><div class="kpi-val" id="kpiReturns">—</div><div class="kpi-label">Returns</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="kpi-card kpi-revenue">
+      <div class="kpi-icon"><i class="bi bi-currency-rupee"></i></div>
+      <div class="kpi-body"><div class="kpi-val" id="kpiRevenue">—</div><div class="kpi-label">Net Revenue</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="kpi-card kpi-profit">
+      <div class="kpi-icon"><i class="bi bi-graph-up-arrow"></i></div>
+      <div class="kpi-body"><div class="kpi-val" id="kpiProfit">—</div><div class="kpi-label">Gross Profit</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="kpi-card kpi-real-profit">
+      <div class="kpi-icon"><i class="bi bi-cash-stack"></i></div>
+      <div class="kpi-body"><div class="kpi-val" id="kpiRealProfit">—</div><div class="kpi-label">Real Profit</div></div>
+    </div>
+  </div>
+  <div class="col-6 col-md-2">
+    <div class="kpi-card kpi-commission">
+      <div class="kpi-icon"><i class="bi bi-percent"></i></div>
+      <div class="kpi-body"><div class="kpi-val" id="kpiCommission">—</div><div class="kpi-label">Commission+TDS</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Real Profit Breakdown -->
+<div class="card-surface mb-4" id="profitBreakdown">
+  <h6 class="section-heading mb-3"><i class="bi bi-calculator me-2"></i>Real Profit Breakdown</h6>
+  <div class="row g-2 text-center">
+    <div class="col-md-2">
+      <div class="breakdown-item">
+        <div class="breakdown-val text-success" id="bkRevenue">—</div>
+        <div class="breakdown-label">Selling Price</div>
       </div>
+    </div>
+    <div class="col-md-1 d-flex align-items-center justify-content-center">
+      <span class="breakdown-op">−</span>
+    </div>
+    <div class="col-md-2">
+      <div class="breakdown-item">
+        <div class="breakdown-val text-danger" id="bkCost">—</div>
+        <div class="breakdown-label">Product Cost</div>
+      </div>
+    </div>
+    <div class="col-md-1 d-flex align-items-center justify-content-center">
+      <span class="breakdown-op">−</span>
+    </div>
+    <div class="col-md-2">
+      <div class="breakdown-item">
+        <div class="breakdown-val text-danger" id="bkCommission">—</div>
+        <div class="breakdown-label">Commission+TDS</div>
+      </div>
+    </div>
+    <div class="col-md-1 d-flex align-items-center justify-content-center">
+      <span class="breakdown-op">−</span>
+    </div>
+    <div class="col-md-2">
+      <div class="breakdown-item">
+        <div class="breakdown-val text-danger" id="bkPackaging">—</div>
+        <div class="breakdown-label">Packaging Cost</div>
+      </div>
+    </div>
+    <div class="col-md-1 d-flex align-items-center justify-content-center">
+      <span class="breakdown-op">=</span>
+    </div>
+    <div class="col-md-2">
+      <div class="breakdown-item highlight-profit">
+        <div class="breakdown-val" id="bkRealProfit">—</div>
+        <div class="breakdown-label">Real Profit</div>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- Charts row 1 -->
       <div class="row g-3 mb-3">
@@ -86,6 +180,55 @@
           <div class="chart-card"><div class="chart-title">Orders by Date</div><canvas id="chartDate" height="220"></canvas></div>
         </div>
       </div>
+      <!-- Dead Stock Alert -->
+<div class="row g-3 mb-3" id="deadStockSection" style="display:none">
+  <div class="col-12">
+    <div class="chart-card">
+      <div class="chart-title">
+        <i class="bi bi-archive-fill me-2 text-danger"></i>
+        Dead Stock Alert
+        <span class="badge bg-danger ms-2" id="deadStockCount">0</span>
+        <span class="text-muted ms-2" style="font-size:12px">30+ din se nahi bika</span>
+        <button class="btn btn-sm btn-outline-secondary ms-auto" onclick="toggleDeadStock()">
+          <i class="bi bi-eye" id="deadStockEye"></i> Dekho
+        </button>
+      </div>
+      <div id="deadStockTable" style="display:none">
+        <table class="table table-hover oms-table mt-2">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Category</th>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Cost/Unit</th>
+              <th>Stuck Value</th>
+              <th>Last Sold</th>
+              <th>Stocked On</th>
+              <th>Days Idle</th>
+            </tr>
+          </thead>
+          <tbody id="deadStockBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+      <!-- Best Selling Items -->
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <div class="chart-card">
+      <div class="chart-title"><i class="bi bi-trophy-fill me-2 text-warning"></i>Best Selling Items</div>
+      <div id="bestSellingList"></div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="chart-card">
+      <div class="chart-title"><i class="bi bi-pie-chart-fill me-2 text-primary"></i>Revenue by Category</div>
+      <canvas id="chartRevCategory" height="220"></canvas>
+    </div>
+  </div>
+</div>
       <!-- Charts row 2 -->
       <div class="row g-3">
         <div class="col-12">
@@ -122,7 +265,47 @@
           </div>
         </div>
       </div>
+<!-- CSV Import -->
+<div class="card-surface mb-4">
+  <h5 class="section-heading"><i class="bi bi-file-earmark-spreadsheet-fill me-2"></i>Import Meesho Orders (CSV)</h5>
+  <div class="row g-2 align-items-center">
+    <div class="col-md-5">
+      <div class="csv-drop-zone" id="csvDropZone" onclick="document.getElementById('csvInput').click()">
+        <i class="bi bi-file-earmark-spreadsheet"></i>
+        <span>Click or drag Meesho CSV file here</span>
+      </div>
+      <input type="file" id="csvInput" accept=".csv" class="d-none"/>
+    </div>
+    <div class="col-md-4">
+      <div id="csvFileInfo" class="csv-file-info d-none">
+        <i class="bi bi-file-check-fill text-success me-2"></i>
+        <span id="csvFileName"></span>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button class="btn btn-success btn-sm w-100" onclick="importCSV()" id="csvImportBtn" disabled>
+        <i class="bi bi-cloud-upload-fill me-2"></i>Import Orders
+      </button>
+    </div>
+  </div>
+  <div id="csvStatus" class="mt-2"></div>
 
+  <!-- How to get CSV -->
+  <div class="csv-help mt-3">
+    <div class="csv-help-title"><i class="bi bi-question-circle me-1"></i>Meesho se CSV kaise download karein?</div>
+    <div class="csv-help-steps">
+      <span class="csv-step">1. Meesho Seller Panel open karo</span>
+      <i class="bi bi-arrow-right"></i>
+      <span class="csv-step">2. Orders section jao</span>
+      <i class="bi bi-arrow-right"></i>
+      <span class="csv-step">3. "Download Report" click karo</span>
+      <i class="bi bi-arrow-right"></i>
+      <span class="csv-step">4. CSV download karo</span>
+      <i class="bi bi-arrow-right"></i>
+      <span class="csv-step">5. Yahan upload karo ✅</span>
+    </div>
+  </div>
+</div>
       <!-- Manual Order Entry -->
       <div class="card-surface mt-4">
         <h5 class="section-heading"><i class="bi bi-plus-circle-fill me-2"></i>Manual Order Entry</h5>
@@ -132,7 +315,24 @@
           <div class="col-md-1"><input class="form-control form-control-sm" id="moQty" type="number" min="1" placeholder="Qty"/></div>
           <div class="col-md-2"><input class="form-control form-control-sm" id="moPrice" type="number" step="0.01" placeholder="Sell Price"/></div>
           <div class="col-md-2"><input class="form-control form-control-sm" id="moDate" type="date"/></div>
-          <div class="col-md-1"><div class="form-check form-switch pt-1"><input class="form-check-input" type="checkbox" id="moReturn"/><label class="form-check-label small">Return</label></div></div>
+          <div class="col-md-1">
+  <div class="form-check form-switch pt-1">
+    <input class="form-check-input" type="checkbox" id="moReturn" onchange="toggleReturnReason()"/>
+    <label class="form-check-label small">Return</label>
+  </div>
+</div>
+<div class="col-md-2" id="returnReasonBox" style="display:none">
+  <select class="form-select form-select-sm" id="moReturnReason">
+    <option value="">Reason select karo</option>
+    <option value="Size Issue">Size Issue</option>
+    <option value="Damaged Product">Damaged Product</option>
+    <option value="Not As Described">Not As Described</option>
+    <option value="Wrong Item">Wrong Item</option>
+    <option value="Customer Cancelled">Customer Cancelled</option>
+    <option value="Quality Issue">Quality Issue</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
           <div class="col-md-1"><button class="btn btn-success btn-sm w-100" onclick="submitManualOrder()"><i class="bi bi-plus-lg"></i></button></div>
         </div>
         <div id="manualOrderStatus" class="mt-2"></div>
@@ -149,8 +349,7 @@
       </div>
       <div class="table-surface">
         <table class="table table-hover oms-table" id="ordersTable">
-          <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th>Type</th><th>Invoice</th><th></th></tr></thead>
-          <tbody id="ordersBody"><tr><td colspan="10" class="text-center text-muted py-4">Loading…</td></tr></tbody>
+          <thead><tr><th>#</th><th>Date</th><th>Category</th><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th>Net Pay</th><th>Type</th><th>Return Reason</th><th></th></tr></thead>          <tbody id="ordersBody"><tr><td colspan="10" class="text-center text-muted py-4">Loading…</td></tr></tbody>
         </table>
       </div>
     </section>
@@ -182,7 +381,314 @@
         </table>
       </div>
     </section>
+<!-- ═══════════════════ PACKAGING PAGE ═══════════════════ -->
+<section id="page-packaging" class="page">
+  <div class="card-surface mb-4">
+    <h5 class="section-heading"><i class="bi bi-plus-circle-fill me-2"></i>Add Packaging Stock</h5>
+    <div class="row g-2">
+      <div class="col-md-3"><input class="form-control form-control-sm" id="pkgItem" placeholder="Item Name (e.g. Polybag 12x16)"/></div>
+      <div class="col-md-1"><input class="form-control form-control-sm" id="pkgQty" type="number" min="1" placeholder="Qty"/></div>
+      <div class="col-md-2"><input class="form-control form-control-sm" id="pkgCost" type="number" step="0.01" placeholder="Cost/Unit ₹"/></div>
+      <div class="col-md-2"><input class="form-control form-control-sm" id="pkgAlert" type="number" placeholder="Low Alert Qty"/></div>
+      <div class="col-md-2"><input class="form-control form-control-sm" id="pkgDate" type="date"/></div>
+      <div class="col-md-2"><button class="btn btn-primary btn-sm w-100" onclick="addPackaging()"><i class="bi bi-plus-lg me-1"></i>Add</button></div>
+    </div>
+    <div id="packagingStatus" class="mt-2"></div>
+  </div>
 
+  <h5 class="section-heading mb-3">Packaging Inventory</h5>
+  <div class="table-surface">
+    <table class="table table-hover oms-table">
+      <thead><tr><th>#</th><th>Item</th><th>Qty</th><th>Cost/Unit</th><th>Total Cost</th><th>Low Alert</th><th>Date</th><th></th></tr></thead>
+      <tbody id="packagingBody"><tr><td colspan="8" class="text-center text-muted py-4">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════════ PAYMENTS PAGE ═══════════════════ -->
+<section id="page-payments" class="page">
+  <!-- Summary Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="kpi-card kpi-orders">
+        <div class="kpi-icon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="kpi-body"><div class="kpi-val" id="pendingAmt">—</div><div class="kpi-label">Pending Amount</div></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="kpi-card kpi-revenue">
+        <div class="kpi-icon"><i class="bi bi-check-circle-fill"></i></div>
+        <div class="kpi-body"><div class="kpi-val" id="receivedAmt">—</div><div class="kpi-label">Received Amount</div></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="kpi-card kpi-returns">
+        <div class="kpi-icon"><i class="bi bi-percent"></i></div>
+        <div class="kpi-body"><div class="kpi-val" id="totalCommission">—</div><div class="kpi-label">Total Commission</div></div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="kpi-card kpi-profit">
+        <div class="kpi-icon"><i class="bi bi-receipt"></i></div>
+        <div class="kpi-body"><div class="kpi-val" id="totalTds">—</div><div class="kpi-label">Total TDS</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="section-heading mb-0">Pending Payments</h5>
+    <div class="d-flex gap-2">
+      <span class="badge bg-warning text-dark">Meesho pays in 7 days after delivery</span>
+    </div>
+  </div>
+  <div class="table-surface">
+    <table class="table table-hover oms-table">
+      <thead><tr><th>#</th><th>Date</th><th>Item</th><th>Qty</th><th>Sell Price</th><th>Commission</th><th>TDS</th><th>Net Payment</th><th>Status</th><th></th></tr></thead>
+      <tbody id="paymentsBody"><tr><td colspan="10" class="text-center text-muted py-4">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+<!-- ═══════════════════ DAILY SUMMARY PAGE ═══════════════════ -->
+<section id="page-daily" class="page">
+  <!-- Date Picker -->
+  <div class="card-surface mb-4">
+    <div class="row g-2 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label-sm">Select Date</label>
+        <input type="date" id="dailyDate" class="form-control form-control-sm"/>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm w-100" onclick="loadDailySummary()">
+          <i class="bi bi-search me-1"></i>Show Summary
+        </button>
+      </div>
+      <div class="col-md-7 text-end">
+        <span class="text-muted" style="font-size:13px">
+          <i class="bi bi-info-circle me-1"></i>
+          View summary for any date
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Today KPIs -->
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-md-2">
+      <div class="kpi-card kpi-orders">
+        <div class="kpi-icon"><i class="bi bi-cart-check-fill"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val" id="dlyOrders">—</div>
+          <div class="kpi-label">Orders</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="kpi-card kpi-returns">
+        <div class="kpi-icon"><i class="bi bi-arrow-return-left"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val" id="dlyReturns">—</div>
+          <div class="kpi-label">Returns</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="kpi-card kpi-revenue">
+        <div class="kpi-icon"><i class="bi bi-currency-rupee"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val" id="dlyRevenue">—</div>
+          <div class="kpi-label">Revenue</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="kpi-card kpi-profit">
+        <div class="kpi-icon"><i class="bi bi-cash-stack"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val" id="dlyNetPay">—</div>
+          <div class="kpi-label">Net Payment</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="kpi-card kpi-commission">
+        <div class="kpi-icon"><i class="bi bi-bag-check-fill"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val" id="dlyItems">—</div>
+          <div class="kpi-label">Items Sold</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-6 col-md-2">
+      <div class="kpi-card kpi-real-profit">
+        <div class="kpi-icon"><i class="bi bi-percent"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val" id="dlyCommission">—</div>
+          <div class="kpi-label">Commission</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison + Weekly -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="chart-card h-100">
+        <div class="chart-title">
+          <i class="bi bi-arrow-left-right me-2"></i>Today vs Yesterday
+        </div>
+        <div id="compareSection">
+          <div class="compare-row">
+            <span class="compare-label">Today Orders</span>
+            <span class="compare-val" id="cmpTodayOrders">—</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-label">Yesterday Orders</span>
+            <span class="compare-val" id="cmpYestOrders">—</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-label">Today Revenue</span>
+            <span class="compare-val text-success" id="cmpTodayRev">—</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-label">Yesterday Revenue</span>
+            <span class="compare-val" id="cmpYestRev">—</span>
+          </div>
+          <div class="compare-row mt-2" id="cmpDiff"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="chart-card h-100">
+        <div class="chart-title">
+          <i class="bi bi-trophy-fill me-2 text-warning"></i>Today Top Items
+        </div>
+        <div id="dailyTopItems">
+          <div class="empty-state"><i class="bi bi-inbox"></i><p>No orders today</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="chart-card h-100">
+        <div class="chart-title">
+          <i class="bi bi-bar-chart-fill me-2"></i>This Week
+        </div>
+        <canvas id="chartWeekly" height="180"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ═══════════════════ SUPPLIERS PAGE ═══════════════════ -->
+<section id="page-suppliers" class="page">
+
+  <!-- Add Supplier -->
+  <div class="card-surface mb-4">
+    <h5 class="section-heading"><i class="bi bi-person-plus-fill me-2"></i>Add Supplier</h5>
+    <div class="row g-2">
+      <div class="col-md-3">
+        <input class="form-control form-control-sm" id="supName" placeholder="Supplier Name *"/>
+      </div>
+      <div class="col-md-2">
+        <input class="form-control form-control-sm" id="supPhone" placeholder="Phone Number"/>
+      </div>
+      <div class="col-md-2">
+        <input class="form-control form-control-sm" id="supCategory" placeholder="Category"/>
+      </div>
+      <div class="col-md-3">
+        <input class="form-control form-control-sm" id="supNotes" placeholder="Notes"/>
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary btn-sm w-100" onclick="addSupplier()">
+          <i class="bi bi-plus-lg me-1"></i>Add
+        </button>
+      </div>
+    </div>
+    <div id="supplierStatus" class="mt-2"></div>
+  </div>
+
+  <!-- Suppliers List -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-5">
+      <div class="chart-card">
+        <div class="chart-title"><i class="bi bi-people-fill me-2"></i>Suppliers List</div>
+        <div class="table-surface mt-2">
+          <table class="table table-hover oms-table">
+            <thead>
+              <tr><th>Name</th><th>Phone</th><th>Category</th><th>Pending</th><th>Total</th><th></th></tr>
+            </thead>
+            <tbody id="suppliersBody">
+              <tr><td colspan="6" class="text-center text-muted py-3">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Purchase -->
+    <div class="col-md-7">
+      <div class="chart-card">
+        <div class="chart-title"><i class="bi bi-cart-plus-fill me-2"></i>Record Purchase</div>
+        <div class="row g-2 mt-1">
+          <div class="col-md-4">
+            <label class="form-label-sm">Supplier</label>
+            <select class="form-select form-select-sm" id="purSupplier">
+              <option value="">Select Supplier</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-sm">Item Name</label>
+            <input class="form-control form-control-sm" id="purItem" placeholder="Item Name"/>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label-sm">Category</label>
+            <input class="form-control form-control-sm" id="purCategory" placeholder="Category"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label-sm">Qty</label>
+            <input class="form-control form-control-sm" id="purQty" type="number" min="1" placeholder="Qty"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label-sm">Cost/Unit ₹</label>
+            <input class="form-control form-control-sm" id="purCost" type="number" step="0.01" placeholder="Cost"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label-sm">Paid ₹</label>
+            <input class="form-control form-control-sm" id="purPaid" type="number" step="0.01" placeholder="Amount Paid"/>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label-sm">Date</label>
+            <input class="form-control form-control-sm" id="purDate" type="date"/>
+          </div>
+          <div class="col-12">
+            <div class="supplier-calc" id="purCalc"></div>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success btn-sm w-100" onclick="addPurchase()">
+              <i class="bi bi-check-circle-fill me-2"></i>Save Purchase & Update Stock
+            </button>
+          </div>
+        </div>
+        <div id="purchaseStatus" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Purchase History -->
+  <h5 class="section-heading mb-3">Purchase History</h5>
+  <div class="table-surface">
+    <table class="table table-hover oms-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Date</th><th>Supplier</th><th>Item</th>
+          <th>Qty</th><th>Cost/Unit</th><th>Total</th>
+          <th>Paid</th><th>Pending</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="purchasesBody">
+        <tr><td colspan="10" class="text-center text-muted py-4">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
     <!-- ═══════════════════ LOGS PAGE ═══════════════════ -->
     <section id="page-logs" class="page">
       <h5 class="section-heading mb-3"><i class="bi bi-journal-text me-2"></i>Upload Logs</h5>
@@ -212,3 +718,4 @@
 <script src="/js/app.js"></script>
 </body>
 </html>
+

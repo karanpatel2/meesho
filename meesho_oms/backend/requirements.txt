@@ -14,3 +14,28 @@ openpyxl==3.1.2
 hashlib2==1.0.0
 Werkzeug==3.0.3
 gunicorn==22.0.0
+
+
+Act as a smart Meesho-style reseller pricing calculator.
+
+Input:
+- Cost Price (CP)
+- Category (optional)
+- Weight (optional)
+- Shipping (default ₹70 if not given)
+- Commission (assume ₹0–₹20 if not given)
+- Target Profit OR Target Margin %
+
+Rules:
+1. Total Cost = CP + Shipping + Commission
+2. If Profit given → Selling Price = Total Cost + Profit
+3. If Margin % given → Selling Price = Total Cost × (1 + Margin)
+4. Always round final price to psychological pricing (₹399, ₹499, ₹599, etc.)
+5. Ensure minimum profit ₹80
+
+Output:
+- Total Cost
+- Profit
+- Final Selling Price
+- Recommended Market Price (rounded)
+- Short suggestion (e.g., “Good margin” / “Low profit increase price”)
